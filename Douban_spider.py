@@ -11,11 +11,14 @@ headers = {
 
 
 class Douban_spide():
-    def __init__(self, url, name, page):
+    def __init__(self, number, name, page):
         # https://movie.douban.com/celebrity/1348382/photos/
-        self.url = url
+        self.number = number
         self.name = name
         self.page = page
+
+    def get_url(self):
+        return "https://movie.douban.com/celebrity/" + self.number + "/photos/?type=C&start=0&sortby=vote&size=a&subtype=a"
 
     def __make_dir(self):
         # 在F盘创建一个以name命名的文件夹用来存放爬取的图片
@@ -26,7 +29,7 @@ class Douban_spide():
         return 40 * self.page
 
     def header_referer_change(self):
-        headers["referer"] = self.url
+        headers["referer"] = self.get_url()
         return headers
 
     def get_route(self):
@@ -54,10 +57,10 @@ class Douban_spide():
         # 启动爬虫
         self.__make_dir()  # 创建存储文件夹
 
-        url_process = self.url.split("&", 2)
+        url_process = self.get_url().split("&", 2)
         # 分解目标url
         for x in range(0, self.range_num(), 40):
-            print "正在爬取%s第%s页..." % (self.name,x/40)
+            print "正在爬取%s第%s页..." % (self.name, x / 40)
             url_new = url_process[0] + "&" + "start=" + str(x) + "&" + url_process[2]  # 重组获得下一页的目标url
             html = self.get_html(url_new)
             self.get_image(html)
